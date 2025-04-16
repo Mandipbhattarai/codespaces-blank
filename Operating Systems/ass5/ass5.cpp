@@ -179,12 +179,78 @@ bool requestResources(int numProcesses, int numResources, int process, vector<in
     }
 }
 
+// Recursive function to find all safe sequences
+void findAllSafeSequences(int numProcesses, int numResources, vector<int> &available,
+    vector<vector<int>> &allocated, vector<vector<int>> &need,
+    vector<bool> &finish, vector<int> &currentSequence,
+    vector<vector<int>> &allSequences) {
+    bool found = false;
+
+    for (int i = 0; i < numProcesses; i++) {
+        if (!finish[i]) {
+            bool canAllocate = true;
+            for (int j = 0; j < numResources; j++) {
+                if (need[i][j] > available[j]) {
+                    canAllocate = false;
+                    break;
+            }
+    }
+
+    if (canAllocate) {
+        for (int j = 0; j < numResources; j++) {
+            available[j] += allocated[i][j];
+        }
+
+        finish[i] = true;
+        currentSequence.push_back(i);
+
+        // Recurse
+        findAllSafeSequences(numProcesses, numResources, available, allocated, need, finish, currentSequence, allSequences);
+
+        // Backtrack
+        for (int j = 0; j < numResources; j++) {
+        available[j] -= allocated[i][j];
+        }
+
+        finish[i] = false;
+        currentSequence.pop_back();
+        found = true;
+        }   
+    }
+}
+
+if (!found && currentSequence.size() == numProcesses) {
+allSequences.push_back(currentSequence);
+}
+}
+void displayAllSafeSequences(int numProcesses, int numResources, vector<int> available,
+    vector<vector<int>> allocated, vector<vector<int>> need) {
+    vector<bool> finish(numProcesses, false);
+    vector<int> currentSequence;
+    vector<vector<int>> allSequences;
+
+    findAllSafeSequences(numProcesses, numResources, available, allocated, need,
+    finish, currentSequence, allSequences);
+
+    if (allSequences.empty()) {
+        cout << "\nNo safe sequences found. System is in UNSAFE state.\n";
+    } else {
+        cout << "\nAll Possible Safe Sequences:\n";
+    for (const auto &seq : allSequences) {
+        for (int pid : seq) {
+                cout << "P" << pid << " ";
+            }
+            cout << "\n";
+        }
+    }
+}
+
 // Menu function to interact with the user
 void menu(int numProcesses, int numResources, vector<int> &available, vector<vector<int>> &maxNeed,
           vector<vector<int>> &allocated, vector<vector<int>> &need) {
     int choice;
     do {
-        cout << "\nMENU:\n1. Display Current System State\n2. Check System Safety\n3. Request Resources\n4. Exit\n";
+        cout << "\nMENU:\n1. Display Current System State\n2. Check System Safety\n3. Request Resources\n4. Show All Safe Sequences\n 5. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
 
@@ -220,12 +286,16 @@ void menu(int numProcesses, int numResources, vector<int> &available, vector<vec
                 break;
             }
             case 4:
+                displayAllSafeSequences(numProcesses, numResources, available, allocated, need);
+                break;
+
+            case 5:
                 cout << "\nExiting the program.";
                 break;
             default:
                 cout << "\nInvalid choice. Please try again.";
         }
-    } while (choice != 4);
+    } while (choice != 5);
 }
 
 // Main function
