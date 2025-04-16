@@ -165,8 +165,7 @@ int main() {
                 getValidMatrix(maxDemand, "Enter maximum demand matrix:\n");
                 getValidMatrix(allocation, "Enter allocation matrix:\n");
                 if (!calculateNeedMatrix()) {
-                    cout << "Initialization failed due to invalid need values. Terminating program.\n";
-                    return 0;
+                    cout << "Initialization failed due to invalid need values.\n";
                 } else {
                     systemInitialized = true;
                     cout << "System initialized successfully.\n";
