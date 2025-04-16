@@ -1,0 +1,26 @@
+  [Child 2] Executing 'grep -i pccoe' to search for the keyword...
+pccoe pccoe 
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+-rw-rw-r-- 1 pccoe pccoe    0 Feb 17 14:35 file.txt
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+drwxrwxr-x 2 pccoe pccoe 4096 Jan 21 12:18 first
+pccoe 
+PCCOE
