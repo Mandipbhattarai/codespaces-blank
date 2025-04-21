@@ -1,38 +1,42 @@
+#include <iostream>
 #include <fstream>
-#include <bits/stdc++.h>
 using namespace std;
 
-
-int main(int argc,char*argv[]){
+int main(int argc,char* argv[]){
     if(argc!=3){
-        cout<<"Invalid Number of args";
+        cout<<"use 3 args"<<endl;
         return 1;
     }
 
-    int line;
-    string inFile = argv[1];
-    string outFile = argv[2];
+    string firstFile = argv[1];
+    string secondFile = argv[2];
 
-    inFile = inFile + ".txt";
-    outFile = outFile + ".txt";
+    firstFile+=".txt";
+    secondFile+=".txt";
 
-    ifstream oldFile(inFile);
-    if(!oldFile){
+    string line;
+
+    ifstream oldfile(firstFile);
+    if(!oldfile){
+        cout<<"Could not open the old file"<<endl;
         return 1;
     }
 
-    ofstream newFile(outFile);
+    ofstream newFile(secondFile);
     if(!newFile){
-        return 2;
+        cout<<"Couldnot open the newFile"<<endl;
+        return 1;
     }
 
-    while(getline(oldFile,line)){
-        newFile << line << " ";
+    while(getline(oldfile,line)){
+        newFile<<line<<endl;
     }
 
-    cout<<"File copied successfully";
+    cout<<"Finished copying the file"<<endl;
+
+    oldfile.close();
     newFile.close();
-    oldFile.close();
-    return 0;
 
+
+    return 0;
 }

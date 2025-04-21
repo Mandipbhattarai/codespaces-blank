@@ -6,25 +6,25 @@
 #include <climits>
 using namespace std;
 
-void calculateTurnaroundTime(int n, vector<int>& completionTime, vector<int>& arrivalTime, vector<int>& turnAroundTime) {
+void calculatetat(int n, vector<int>& ct, vector<int>& at, vector<int>& tat) {
     for (int i = 0; i < n; i++) {
-        turnAroundTime[i] = completionTime[i] - arrivalTime[i];
+        tat[i] = ct[i] - at[i];
     }
 }
 
-void calculateWaitingTime(int n, vector<int>& turnAroundTime, vector<int>& burstTime, vector<int>& waitTime) {
+void calculateWaitingTime(int n, vector<int>& tat, vector<int>& bt, vector<int>& wt) {
     for (int i = 0; i < n; i++) {
-        waitTime[i] = turnAroundTime[i] - burstTime[i];
+        wt[i] = tat[i] - bt[i];
     }
 }
 
-void printResults(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime, 
-    vector<int>& completionTime, vector<int>& turnAroundTime, vector<int>& waitTime, 
+void printResults(int n, vector<int>& process, vector<int>& at, vector<int>& bt, 
+    vector<int>& ct, vector<int>& tat, vector<int>& wt, 
     vector<int>& gantt) {
 cout << "\nProcess\tAT\tBT\tCT\tTAT\tWT" << endl;
 for (int i = 0; i < n; i++) {
-cout << process[i] << "\t" << arrivalTime[i] << "\t" << burstTime[i] << "\t"
-<< completionTime[i] << "\t" << turnAroundTime[i] << "\t" << waitTime[i] << endl;
+cout << process[i] << "\t" << at[i] << "\t" << bt[i] << "\t"
+<< ct[i] << "\t" << tat[i] << "\t" << wt[i] << endl;
 }
 
 cout << "\nGantt Chart:\n";
@@ -46,55 +46,55 @@ cout << "----";
 cout << "\n0";
 int time = 0;
 for (int i = 0; i < gantt.size(); i++) {
-time += burstTime[gantt[i] - 1]; 
+time += bt[gantt[i] - 1]; 
 cout << "   " << time;
 }
 cout << endl;
 }
 
 
-void fcfs(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime) {
-    vector<int> completionTime(n), turnAroundTime(n), waitTime(n);
+void fcfs(int n, vector<int>& process, vector<int>& at, vector<int>& bt) {
+    vector<int> ct(n), tat(n), wt(n);
     vector<int> gantt;
-    int totalTurnAroundTime = 0, totalWaitTime = 0;
+    int ttat = 0, twt = 0;
 
-    completionTime[0] = arrivalTime[0] + burstTime[0];
+    ct[0] = at[0] + bt[0];
     gantt.push_back(process[0]);
 
     for (int i = 1; i < n; i++) {
-        int startTime = max(completionTime[i - 1], arrivalTime[i]);
-        completionTime[i] = startTime + burstTime[i];
+        int startTime = max(ct[i - 1], at[i]);
+        ct[i] = startTime + bt[i];
         gantt.push_back(process[i]);
     }
 
-    calculateTurnaroundTime(n, completionTime, arrivalTime, turnAroundTime);
-    calculateWaitingTime(n, turnAroundTime, burstTime, waitTime);
+    calculatetat(n, ct, at, tat);
+    calculateWaitingTime(n, tat, bt, wt);
 
     for (int i = 0; i < n; i++) {
-        totalTurnAroundTime += turnAroundTime[i];
-        totalWaitTime += waitTime[i];
+        ttat += tat[i];
+        twt += wt[i];
     }
 
-    printResults(n, process, arrivalTime, burstTime, completionTime, turnAroundTime, waitTime, gantt);
+    printResults(n, process, at, bt, ct, tat, wt, gantt);
 
-    cout << "\nAverage Turnaround Time: " << (float)totalTurnAroundTime / n << endl;
-    cout << "Average Waiting Time: " << (float)totalWaitTime / n << endl;
+    cout << "\nAverage Turnaround Time: " << (float)ttat / n << endl;
+    cout << "Average Waiting Time: " << (float)twt / n << endl;
 }
 
 
 
-void sjfNonPreemptive(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime) {
-    vector<int> completionTime(n), turnAroundTime(n), waitTime(n);
+void sjfNonPreemptive(int n, vector<int>& process, vector<int>& at, vector<int>& bt) {
+    vector<int> ct(n), tat(n), wt(n);
     vector<int> gantt;
-    int totalTurnAroundTime = 0, totalWaitTime = 0;
+    int ttat = 0, twt = 0;
     vector<bool> visited(n, false);
     int currentTime = 0, completed = 0;
 
     while (completed < n) {
         int minBurst = INT_MAX, minIndex = -1;
         for (int i = 0; i < n; i++) {
-            if (!visited[i] && arrivalTime[i] <= currentTime && burstTime[i] < minBurst) {
-                minBurst = burstTime[i];
+            if (!visited[i] && at[i] <= currentTime && bt[i] < minBurst) {
+                minBurst = bt[i];
                 minIndex = i;
             }
         }
@@ -103,37 +103,37 @@ void sjfNonPreemptive(int n, vector<int>& process, vector<int>& arrivalTime, vec
             currentTime++;
         } else {
             visited[minIndex] = true;
-            currentTime += burstTime[minIndex];
-            completionTime[minIndex] = currentTime;
-            turnAroundTime[minIndex] = completionTime[minIndex] - arrivalTime[minIndex];
-            waitTime[minIndex] = turnAroundTime[minIndex] - burstTime[minIndex];
+            currentTime += bt[minIndex];
+            ct[minIndex] = currentTime;
+            tat[minIndex] = ct[minIndex] - at[minIndex];
+            wt[minIndex] = tat[minIndex] - bt[minIndex];
 
             gantt.push_back(process[minIndex]);
-            totalTurnAroundTime += turnAroundTime[minIndex];
-            totalWaitTime += waitTime[minIndex];
+            ttat += tat[minIndex];
+            twt += wt[minIndex];
             completed++;
         }
     }
 
-    printResults(n, process, arrivalTime, burstTime, completionTime, turnAroundTime, waitTime, gantt);
+    printResults(n, process, at, bt, ct, tat, wt, gantt);
 
-    cout << "\nAverage Turnaround Time: " << (float)totalTurnAroundTime / n << endl;
-    cout << "Average Waiting Time: " << (float)totalWaitTime / n << endl;
+    cout << "\nAverage Turnaround Time: " << (float)ttat / n << endl;
+    cout << "Average Waiting Time: " << (float)twt / n << endl;
 }
 
-void sjfPreemptive(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime) {
-    vector<int> remainingTime(n), completionTime(n), turnAroundTime(n), waitTime(n);
+void sjfPreemptive(int n, vector<int>& process, vector<int>& at, vector<int>& bt) {
+    vector<int> remainingTime(n), ct(n), tat(n), wt(n);
     vector<int> gantt;
-    int totalTurnAroundTime = 0, totalWaitTime = 0;
+    int ttat = 0, twt = 0;
     int completed = 0, currentTime = 0;
     vector<bool> visited(n, false);
 
-    for (int i = 0; i < n; i++) remainingTime[i] = burstTime[i];
+    for (int i = 0; i < n; i++) remainingTime[i] = bt[i];
 
     while (completed < n) {
         int minBurst = INT_MAX, minIndex = -1;
         for (int i = 0; i < n; i++) {
-            if (arrivalTime[i] <= currentTime && remainingTime[i] > 0 && remainingTime[i] < minBurst) {
+            if (at[i] <= currentTime && remainingTime[i] > 0 && remainingTime[i] < minBurst) {
                 minBurst = remainingTime[i];
                 minIndex = i;
             }
@@ -149,36 +149,36 @@ void sjfPreemptive(int n, vector<int>& process, vector<int>& arrivalTime, vector
 
             if (remainingTime[minIndex] == 0) {
                 completed++;
-                completionTime[minIndex] = currentTime;
-                turnAroundTime[minIndex] = completionTime[minIndex] - arrivalTime[minIndex];
-                waitTime[minIndex] = turnAroundTime[minIndex] - burstTime[minIndex];
+                ct[minIndex] = currentTime;
+                tat[minIndex] = ct[minIndex] - at[minIndex];
+                wt[minIndex] = tat[minIndex] - bt[minIndex];
 
-                totalTurnAroundTime += turnAroundTime[minIndex];
-                totalWaitTime += waitTime[minIndex];
+                ttat += tat[minIndex];
+                twt += wt[minIndex];
             }
         }
     }
 
-    printResults(n, process, arrivalTime, burstTime, completionTime, turnAroundTime, waitTime, gantt);
+    printResults(n, process, at, bt, ct, tat, wt, gantt);
 
-    cout << "\nAverage Turnaround Time: " << (float)totalTurnAroundTime / n << endl;
-    cout << "Average Waiting Time: " << (float)totalWaitTime / n << endl;
+    cout << "\nAverage Turnaround Time: " << (float)ttat / n << endl;
+    cout << "Average Waiting Time: " << (float)twt / n << endl;
 }
 
-void roundRobin(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime, int timeQuantum) {
-    vector<int> remainingTime(n), completionTime(n, -1), turnAroundTime(n), waitTime(n);
+void roundRobin(int n, vector<int>& process, vector<int>& at, vector<int>& bt, int timeQuantum) {
+    vector<int> remainingTime(n), ct(n, -1), tat(n), wt(n);
     vector<int> gantt;
-    int totalTurnAroundTime = 0, totalWaitTime = 0;
+    int ttat = 0, twt = 0;
     queue<int> readyQueue;
     int time = 0, completed = 0;
 
     for (int i = 0; i < n; i++) {
-        remainingTime[i] = burstTime[i];
+        remainingTime[i] = bt[i];
     }
 
     int index = 0;
     while (completed < n) {
-        while (index < n && arrivalTime[index] <= time) {
+        while (index < n && at[index] <= time) {
             readyQueue.push(index);
             index++;
         }
@@ -192,127 +192,133 @@ void roundRobin(int n, vector<int>& process, vector<int>& arrivalTime, vector<in
             time += executionTime;
             remainingTime[idx] -= executionTime;
 
-            while (index < n && arrivalTime[index] <= time) {
+            while (index < n && at[index] <= time) {
                 readyQueue.push(index);
                 index++;
             }
 
             if (remainingTime[idx] == 0) {
-                completionTime[idx] = time;
-                turnAroundTime[idx] = completionTime[idx] - arrivalTime[idx];
-                waitTime[idx] = turnAroundTime[idx] - burstTime[idx];
+                ct[idx] = time;
+                tat[idx] = ct[idx] - at[idx];
+                wt[idx] = tat[idx] - bt[idx];
 
-                totalTurnAroundTime += turnAroundTime[idx];
-                totalWaitTime += waitTime[idx];
+                ttat += tat[idx];
+                twt += wt[idx];
                 completed++;
             } else {
                 readyQueue.push(idx);
             }
         } else {
-            time = arrivalTime[index]; 
+            time = at[index]; 
         }
     }
 
-    printResults(n, process, arrivalTime, burstTime, completionTime, turnAroundTime, waitTime, gantt);
+    printResults(n, process, at, bt, ct, tat, wt, gantt);
 
-    cout << "\nAverage Turnaround Time: " << (float)totalTurnAroundTime / n << endl;
-    cout << "Average Waiting Time: " << (float)totalWaitTime / n << endl;
+    cout << "\nAverage Turnaround Time: " << (float)ttat / n << endl;
+    cout << "Average Waiting Time: " << (float)twt / n << endl;
 }
 
-void priorityNonPreemptive(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime, vector<int>& priority) {
-    vector<pair<int, int>> order;
-    for (int i = 0; i < n; i++) {
-        order.push_back({priority[i], i});
-    }
-
-    sort(order.begin(), order.end());
-
-    vector<int> completionTime(n), turnAroundTime(n), waitTime(n);
+void priorityNonPreemptive(int n, vector<int>& process, vector<int>& at,
+                           vector<int>& bt, vector<int>& priority) {
+    vector<int> ct(n), tat(n), wt(n);
     vector<int> gantt;
-    int totalTurnAroundTime = 0, totalWaitTime = 0;
-    int currentTime = 0;
-
-    for (int i = 0; i < n; i++) {
-        int idx = order[i].second;
-
-        if (arrivalTime[idx] > currentTime) {
-            currentTime = arrivalTime[idx];
-        }
-
-        currentTime += burstTime[idx];
-        completionTime[idx] = currentTime;
-        turnAroundTime[idx] = completionTime[idx] - arrivalTime[idx];
-        waitTime[idx] = turnAroundTime[idx] - burstTime[idx];
-
-        gantt.push_back(process[idx]);
-
-        totalTurnAroundTime += turnAroundTime[idx];
-        totalWaitTime += waitTime[idx];
-    }
-
-    printResults(n, process, arrivalTime, burstTime, completionTime, turnAroundTime, waitTime, gantt);
-
-    cout << "\nAverage Turnaround Time: " << (float)totalTurnAroundTime / n << endl;
-    cout << "Average Waiting Time: " << (float)totalWaitTime / n << endl;
-}
-
-void priorityPreemptive(int n, vector<int>& process, vector<int>& arrivalTime, vector<int>& burstTime, vector<int>& priority) {
-    vector<int> remainingTime(burstTime.begin(), burstTime.end());
-    vector<int> completionTime(n, -1), turnAroundTime(n), waitTime(n);
-    vector<int> gantt;
-    int totalTurnAroundTime = 0, totalWaitTime = 0;
-    int completed = 0, currentTime = 0;
-
-    vector<int> indices(n);
-    iota(indices.begin(), indices.end(), 0);
-    sort(indices.begin(), indices.end(), [&](int a, int b) {
-        return arrivalTime[a] < arrivalTime[b];
-    });
-
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    int nextProcess = 0;
+    vector<bool> isDone(n, false);
+    int ttat = 0, twt = 0;
+    int currentTime = 0, completed = 0;
 
     while (completed < n) {
-        while (nextProcess < n && arrivalTime[indices[nextProcess]] <= currentTime) {
-            int idx = indices[nextProcess];
-            pq.push({priority[idx], idx});
-            nextProcess++;
+        int idx = -1;
+        int minPriority = INT_MAX;
+
+        for (int i = 0; i < n; i++) {
+            if (!isDone[i] && at[i] <= currentTime) {
+                if (priority[i] < minPriority) {
+                    minPriority = priority[i];
+                    idx = i;
+                } else if (priority[i] == minPriority) {
+                    if (at[i] < at[idx]) {
+                        idx = i;
+                    }
+                }
+            }
         }
 
-        if (!pq.empty()) {
-            int currentPriority = pq.top().first;
-            int idx = pq.top().second;
-            pq.pop();
+        if (idx != -1) {
+            currentTime = max(currentTime, at[idx]);
+            currentTime += bt[idx];
 
+            ct[idx] = currentTime;
+            tat[idx] = ct[idx] - at[idx];
+            wt[idx] = tat[idx] - bt[idx];
+            ttat += tat[idx];
+            twt += wt[idx];
+            gantt.push_back(process[idx]);
+            isDone[idx] = true;
+            completed++;
+        } else {
+            currentTime++;
+        }
+    }
+
+    printResults(n, process, at, bt, ct, tat, wt, gantt);
+
+    cout << fixed << setprecision(2);
+    cout << "\nAverage Turnaround Time: " << (float)ttat / n << endl;
+    cout << "Average Waiting Time: " << (float)twt / n << endl;
+}
+
+void priorityPreemptive(int n, vector<int>& process, vector<int>& at, vector<int>& bt, vector<int>& priority) {
+    vector<int> remainingTime(bt.begin(), bt.end());
+    vector<int> ct(n, -1), tat(n), wt(n);
+    vector<int> gantt;
+    int ttat = 0, twt = 0;
+    int completed = 0, currentTime = 0;
+    vector<bool> isCompleted(n, false);
+
+    while (completed < n) {
+        int minPriority = INT_MAX, idx = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (at[i] <= currentTime && remainingTime[i] > 0) {
+                if (priority[i] < minPriority) {
+                    minPriority = priority[i];
+                    idx = i;
+                } else if (priority[i] == minPriority) {
+                    // Tie-breaking with earlier arrival
+                    if (at[i] < at[idx]) {
+                        idx = i;
+                    }
+                }
+            }
+        }
+
+        if (idx != -1) {
+            gantt.push_back(process[idx]);
             remainingTime[idx]--;
             currentTime++;
 
-            gantt.push_back(process[idx]);
-
             if (remainingTime[idx] == 0) {
-                completionTime[idx] = currentTime;
-                turnAroundTime[idx] = completionTime[idx] - arrivalTime[idx];
-                waitTime[idx] = turnAroundTime[idx] - burstTime[idx];
-                totalTurnAroundTime += turnAroundTime[idx];
-                totalWaitTime += waitTime[idx];
                 completed++;
-            } else {
-                pq.push({currentPriority, idx}); 
+                ct[idx] = currentTime;
+                tat[idx] = ct[idx] - at[idx];
+                wt[idx] = tat[idx] - bt[idx];
+                ttat += tat[idx];
+                twt += wt[idx];
+                isCompleted[idx] = true;
             }
         } else {
-            if (nextProcess < n) {
-                currentTime = arrivalTime[indices[nextProcess]];
-            } else {
-                currentTime++; 
-            }
+            currentTime++;
         }
     }
 
-    printResults(n, process, arrivalTime, burstTime, completionTime, turnAroundTime, waitTime, gantt);
+    printResults(n, process, at, bt, ct, tat, wt, gantt);
 
-    cout << "\nAverage Turnaround Time: " << (float)totalTurnAroundTime / n << endl;
-    cout << "Average Waiting Time: " << (float)totalWaitTime / n << endl;
+    cout << fixed << setprecision(2);
+    cout << "\nAverage Turnaround Time: " << (float)ttat / n << endl;
+    cout << "Average Waiting Time: " << (float)twt / n << endl;
 }
+
 
 int main() {
     int choice, n;
@@ -320,7 +326,7 @@ int main() {
     cout << "Enter the number of processes: ";
     cin >> n;
 
-    vector<int> process(n), arrivalTime(n), burstTime(n), priority(n);
+    vector<int> process(n), at(n), bt(n), priority(n);
 
     cout << "Enter the processes: \n";
     for (int i = 0; i < n; i++) {
@@ -329,12 +335,12 @@ int main() {
 
     cout << "Enter the arrival time for the respective processes: \n";
     for (int i = 0; i < n; i++) {
-        cin >> arrivalTime[i];
+        cin >> at[i];
     }
 
     cout << "Enter the burst time for the respective processes: \n";
     for (int i = 0; i < n; i++) {
-        cin >> burstTime[i];
+        cin >> bt[i];
     }
 
     do {
@@ -351,33 +357,33 @@ int main() {
 
         switch (choice) {
             case 1:
-                fcfs(n, process, arrivalTime, burstTime);
+                fcfs(n, process, at, bt);
                 break;
             case 2:
-                sjfNonPreemptive(n, process, arrivalTime, burstTime);
+                sjfNonPreemptive(n, process, at, bt);
                 break;
             case 3:
-                sjfPreemptive(n, process, arrivalTime, burstTime);
+                sjfPreemptive(n, process, at, bt);
                 break;
             case 4:
                 int timeQuantum;
                 cout << "Enter time quantum: ";
                 cin >> timeQuantum;
-                roundRobin(n, process, arrivalTime, burstTime, timeQuantum);
+                roundRobin(n, process, at, bt, timeQuantum);
                 break;
             case 5:
                 cout << "Enter the priority for the respective processes: \n";
                 for (int i = 0; i < n; i++) {
                     cin >> priority[i];
                 }
-                priorityNonPreemptive(n, process, arrivalTime, burstTime, priority);
+                priorityNonPreemptive(n, process, at, bt, priority);
                 break;
             case 6:
                 cout << "Enter the priority for the respective processes: \n";
                 for (int i = 0; i < n; i++) {
                     cin >> priority[i];
                 }
-                priorityPreemptive(n, process, arrivalTime, burstTime, priority);
+                priorityPreemptive(n, process, at, bt, priority);
                 break;
             case 7:
                 cout << "Exiting program..." << endl;
